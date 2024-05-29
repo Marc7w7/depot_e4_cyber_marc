@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    parameters {
+        booleanParam(name: 'SKIP_STAGES', defaultValue: false, description: 'Skip du test')
+    }
+
+    stages {
+        stage('Setup') {
+            steps {
+                script {
+                    if (params.SKIP_STAGES) {
+                        echo "Skip du test des stages"
+                    } else {
+                        echo "Continuations du test du stage car il est configurer en tant que false"
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            when {
+                expression {
+                    return !params.SKIP_STAGES
+                }
+            }
+            steps {
+                echo 'construction du projet'
+                // Add your build steps here
+            }
+        }
+
+        stage('Test') {
+            when {
+                expression {
+                    return !params.SKIP_STAGES
+                }
+            }
+            steps {
+                echo 'test du projet'
+
+            }
+        }
+
+        stage('déploiement') {
+            when {
+                expression {
+                    return !params.SKIP_STAGES
+                }
+            }
+            steps {
+                echo 'déploiement'
+
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline complété.'
+        }
+    }
+}
